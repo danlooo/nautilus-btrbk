@@ -11,3 +11,17 @@ curl https://raw.githubusercontent.com/danlooo/nautilus-btrbk/main/nautilus-btrb
 chmod +rx ~/.local/share/nautilus-python/extensions/nautilus-btrbk.py
 ```
 Now, there is a context menu entry called "Open Versions" in Nautilus.
+
+Example btrbk config file in `/etc/btrbk/btrbk.conf` with btrfs subvolumes `/` and `/home` and snapshot directories e.g. `/home/.snapshots`:
+
+```
+volume /
+	subvolume .
+	snapshot_name root
+	snapshot_dir .snapshots
+
+volume /home
+        subvolume .
+        snapshot_name home
+        snapshot_dir .snapshots
+```
