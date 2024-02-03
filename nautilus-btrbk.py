@@ -17,7 +17,7 @@ from gi.repository import Gio, GLib, GObject
 
 gi.require_version('Nautilus', '3.0')
 from gi.repository import Nautilus as FileManager
-class BtrfsExtension(GObject.Object, FileManager.MenuProvider):
+class BtrbkExtension(GObject.Object, FileManager.MenuProvider):
     snapshots_root = "/home"
     snapshots_dir = "/home/.snapshots"
 
@@ -40,7 +40,7 @@ class BtrfsExtension(GObject.Object, FileManager.MenuProvider):
                 version_paths += [snapshot_path]
 
         menu = FileManager.MenuItem(
-            name='BtrfsExtension::Open',
+            name='BtrbkExtension::Open',
             label="Open Versions"
         )
 
@@ -50,7 +50,7 @@ class BtrfsExtension(GObject.Object, FileManager.MenuProvider):
 
         for version_path in version_paths:
             item = FileManager.MenuItem(
-                name='BtrfsExtension::Version' + version_path,
+                name='BtrbkExtension::Version' + version_path,
                 label= self.get_version(version_path, current_path)
             )
             item.connect('activate', self.open_path, version_path)
