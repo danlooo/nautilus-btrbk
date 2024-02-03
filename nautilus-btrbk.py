@@ -23,6 +23,7 @@ class BtrbkExtension(GObject.Object, FileManager.MenuProvider):
     snapshots_root = "/home"
     snapshots_dir = "/home/.snapshots"
 
+    @staticmethod
     def load_btrbk_config(path="/etc/btrbk/btrbk.conf"):
         config_file = open(path, "r")
         volumes = []
@@ -40,7 +41,6 @@ class BtrbkExtension(GObject.Object, FileManager.MenuProvider):
                 current_volume = {"name": items[1]}
                 continue
             if current_volume is not None:
-                print(current_volume)
                 current_volume[items[0]] = items[1]
 
         if current_volume is not None:
@@ -52,23 +52,19 @@ class BtrbkExtension(GObject.Object, FileManager.MenuProvider):
 
 
     def __init__(self):
-        with open( "/etc/btrbk/btrbk.conf", "r") as config_file:
-            for l in config_file.readlines():
-                if l.startswith("#"):
-                    continue
-                items = l.split()
-                if len(items) != 2:
-                    continue
-                print(items)
+        self.config = BtrbkExtension.load_btrbk_config()
 
     def get_version(self, version_path, current_path):
         s = current_path.replace(self.snapshots_root ,"")
         version = version_path.replace(self.snapshots_dir, "").replace(s, "").replace("/", "")
         return version
 
-    def open_path(self, menu, version):
-        print(version)
-        system(f"xdg-open {version}")
+    def open_path(self, menu, p):
+        if path.isdir(p):
+            # direct xdg-open is slow on directories
+            system(f"xdg-open {p} &")
+        else:
+            system(f"xdg-open {p}")
 
     def get_file_items(self, window, files):
         current_path = unquote(urlparse(files[0].get_uri()).path)
