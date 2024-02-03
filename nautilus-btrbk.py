@@ -74,6 +74,8 @@ class BtrbkExtension(GObject.Object, FileManager.MenuProvider):
             snapshot_path = current_path.replace(self.snapshots_root, f"{self.snapshots_dir}/{snapshot}")
             if path.exists(snapshot_path):
                 version_paths += [snapshot_path]
+        # show newest version first
+        version_paths = sorted(version_paths, reverse=True)
 
         menu = FileManager.MenuItem(
             name='BtrbkExtension::Open',
