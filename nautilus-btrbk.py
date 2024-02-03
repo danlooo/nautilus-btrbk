@@ -17,9 +17,49 @@ from gi.repository import Gio, GLib, GObject
 
 gi.require_version('Nautilus', '3.0')
 from gi.repository import Nautilus as FileManager
+
 class BtrbkExtension(GObject.Object, FileManager.MenuProvider):
+    # TODO: Use load_btrbk_config instead
     snapshots_root = "/home"
     snapshots_dir = "/home/.snapshots"
+
+    def load_btrbk_config(path="/etc/btrbk/btrbk.conf"):
+        config_file = open(path, "r")
+        volumes = []
+        current_volume = None
+
+        for l in config_file.readlines():
+            if l.startswith("#"):
+                continue
+            items = l.split()
+            if len(items) != 2:
+                continue
+            if items[0] == "volume":
+                if current_volume is not None:
+                    volumes += [current_volume]
+                current_volume = {"name": items[1]}
+                continue
+            if current_volume is not None:
+                print(current_volume)
+                current_volume[items[0]] = items[1]
+
+        if current_volume is not None:
+            volumes += [current_volume]
+
+        # subvolume with longer file path overwrites sshorter ones
+        volumes = sorted(volumes, key = lambda x:len(x["name"]))
+        return(volumes)
+
+
+    def __init__(self):
+        with open( "/etc/btrbk/btrbk.conf", "r") as config_file:
+            for l in config_file.readlines():
+                if l.startswith("#"):
+                    continue
+                items = l.split()
+                if len(items) != 2:
+                    continue
+                print(items)
 
     def get_version(self, version_path, current_path):
         s = current_path.replace(self.snapshots_root ,"")
@@ -35,7 +75,7 @@ class BtrbkExtension(GObject.Object, FileManager.MenuProvider):
 
         version_paths = []
         for snapshot in listdir(self.snapshots_dir):
-            snapshot_path = current_path.replace("/home", f"{self.snapshots_dir}/{snapshot}")
+            snapshot_path = current_path.replace(self.snapshots_root, f"{self.snapshots_dir}/{snapshot}")
             if path.exists(snapshot_path):
                 version_paths += [snapshot_path]
 
