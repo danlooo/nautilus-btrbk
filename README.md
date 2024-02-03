@@ -1,0 +1,1 @@
+# nautilus-btrbk: Open file versions in nautilus context menu
