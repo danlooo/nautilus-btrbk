@@ -53,6 +53,7 @@ class BtrbkExtension(GObject.Object, FileManager.MenuProvider):
 
     def __init__(self):
         # self.config = BtrbkExtension.load_btrbk_config()
+        pass
 
     def get_version(self, version_path, current_path):
         s = current_path.replace(self.snapshots_root ,"")
